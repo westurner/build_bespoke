@@ -1,0 +1,43 @@
+
+FROM quay.io/fedora/fedora-toolbox:42 as _buildstage
+LABEL comment="A fedora-toolbox container for BespokeSynth development"
+
+# Usage:
+#   podman build -f ./Dockerfile.bespoke --tag westurner/bespokebuild:41
+
+# Run this on the host system to add the "prempt=full" kernel argument,
+# and then restart
+#type -a grubby && sudo grubby --args="preempt=full" --update-kernel=ALL
+#type -a rpm-ostree && sudo rpm-ostree kargs --append=
+
+
+ENV apphome="/home/appuser"
+
+USER root
+
+RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
+    --mount=type=cache,id=dnf-cache,target=/var/cache/dnf,sharing=shared \
+  dnf install -y cmake clang python3.12 python3.12-devel alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.0-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel 
+
+
+RUN useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" appuser && \
+    chown -Rv appuser:appuser "${apphome}"
+
+USER appuser:appuser
+
+WORKDIR ${apphome}
+#VOLUME ${apphome}/BespokeSynth
+
+# RUN git clone https://github.com/BespokeSynth/BespokeSynth && \
+#   cd BespokeSynth && \
+#   git submodule update --init --recursive
+
+# RUN cd BespokeSynth && \
+#   cmake -Bignore/build -DCMAKE_BUILD_TYPE=Release && \
+#   cmake --build ignore/build --parallel 4 --config Release && \
+#   ln -s /BespokeSynth/ignore/build/Source/BespokeSynth_artefacts/Release/BespokeSynth /usr/local/bin/BespokeSynth
+
+
+#CMD /BespokeSynth/ignore/build/Source/BespokeSynth_artefacts/Release/BespokeSynth
+#CMD /usr/local/bin/BespokeSynth
+CMD bash --login
