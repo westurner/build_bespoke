@@ -26,9 +26,21 @@
 		"--security-opt=label=disable",
 		"--log-level=debug",
 
+
+		//// to run bespoke within this container
+		"--device","/dev/snd/seq",
 		// https://github.com/NVIDIA/nvidia-container-toolkit/issues/46#issuecomment-1587350187
-		// "--net=host",
-		// "--ipc=host",
+		"--net=host",
+		"--ipc=host",
+		"--device","nvidia.com/gpu=all",
+		//  $ sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+		//  $ nvidia-ctk cdi generate --output=/var/run/cdi/nvidia.yaml
+		// "--device","/dev/dri/card0",
+		// "--device","/dev/dri/renderD129",
+		"--device","/dev/dri/card1",
+		"--device","/dev/dri/renderD128",
+		"-e DISPLAY",
+		"-v","/tmp/.X11-unix:/tmp/.X11-unix:rw",
 	],
 
 	// 4. Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
@@ -64,6 +76,10 @@
 			"extensions": [
 				"ms-vscode.makefile-tools",
 
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cmake-tools",
+				//"fredericbonnet.cmake-test-adapter",
+
 				"ms-python.python",
 				"ms-python.debugpy",
 				"ms-python.vscode-pylance",
@@ -73,7 +89,7 @@
 				//"ms-toolsai.vscode-jupyter-cell-tags",
 				//"ms-toolsai.jupyter-renderers",
 				//"ms-toolsai.vscode-jupyter-slideshow",
-				"charliermarsh.ruff",
+				"charliermarsh.ruff"
 
 			]
 		}
