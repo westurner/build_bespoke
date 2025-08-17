@@ -97,7 +97,7 @@
 
 	// 6. Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	//"remoteUser": "vscode",
-	"remoteUser": "root" // in a rootless container
+	//"remoteUser": "root" // in a rootless container
 
 	// the following commands are related to container lifecylce. More info: https://containers.dev/implementors/json_reference/#lifecycle-scripts
 
