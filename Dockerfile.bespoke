@@ -11,7 +11,8 @@ LABEL comment="A fedora-toolbox container for BespokeSynth development"
 #type -a rpm-ostree && sudo rpm-ostree kargs --append=
 
 
-ENV apphome="/home/appuser"
+ENV appuser="appuser"
+ENV apphome="/home/${appuser}"
 
 USER root
 
@@ -19,11 +20,14 @@ RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
     --mount=type=cache,id=dnf-cache,target=/var/cache/dnf,sharing=shared \
   dnf install -y cmake clang python3.12 python3.12-devel alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.0-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel 
 
+RUN useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" "${appuser}" && \
+    chown -Rv "${appuser}:${appuser}" "${apphome}"
 
-RUN useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" appuser && \
-    chown -Rv appuser:appuser "${apphome}"
+COPY build_bespoke.sh "${apphome}"
+RUN chown "${appuser}" "${apphome}/build_bespoke.sh" && \
+    sh "${apphome}/build_bespoke.sh" -v --install-only
 
-USER appuser:appuser
+USER ${appuser}:${appuser}
 
 WORKDIR ${apphome}
 #VOLUME ${apphome}/BespokeSynth
