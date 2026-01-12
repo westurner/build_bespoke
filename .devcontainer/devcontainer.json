@@ -28,10 +28,10 @@
 
 
 		//// to run bespoke within this container
-		"--device","/dev/snd/seq",
 		// https://github.com/NVIDIA/nvidia-container-toolkit/issues/46#issuecomment-1587350187
 		"--net=host",
 		"--ipc=host",
+
 		"--device","nvidia.com/gpu=all",
 		//  $ sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 		//  $ nvidia-ctk cdi generate --output=/var/run/cdi/nvidia.yaml
@@ -41,6 +41,15 @@
 		"--device","/dev/dri/renderD128",
 		"-e DISPLAY",
 		"-v","/tmp/.X11-unix:/tmp/.X11-unix:rw",
+
+		"--device","/dev/snd",
+		//"--device","/dev/snd/seq",
+		//"-v /run/user/$(shell id -u)/pipewire-0:/tmp/pipewire-0"
+		"-v","/run/user/1000/pipewire-0:/tmp/pipewire-0",
+
+		"-e XDG_RUNTIME_DIR=/tmp"
+
+		// see: ./podman-rootless for XAUTHORITY volumes
 	],
 
 	// 4. Features to add to the Dev Container. More info: https://containers.dev/implementors/features.

@@ -1,5 +1,5 @@
 
-FROM quay.io/fedora/fedora-toolbox:42 as _buildstage
+FROM quay.io/fedora/fedora-toolbox:41 as buildstage
 LABEL comment="A fedora-toolbox container for BespokeSynth development"
 
 # Usage:
@@ -18,19 +18,33 @@ USER root
 
 RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
     --mount=type=cache,id=dnf-cache,target=/var/cache/dnf,sharing=shared \
-  dnf install -y cmake clang python3.12 python3.12-devel alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.0-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel 
+  dnf install -y make cmake clang python3 python3-devel alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.0-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel \
+        alsa-lib freetype mesa-libGL libcurl webkit2gtk4.0 gtk+ pipewire-jack-audio-connection-kit \
+        \
+        bash-completion \
+        gdb gdb-gdbserver \
+        valgrind valgrind-gdb \
+        \
+        lsp-plugins-lv2 \
+        lsp-plugins-vst3 \
+        lv2-guitarix-plugins \
+        lv2-qmidiarp
 
-RUN useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" "${appuser}" && \
-    chown -Rv "${appuser}:${appuser}" "${apphome}"
+# Create the homedir, if it doesn't already exist e.g. due to a build --volume
+RUN set -x; useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" "${appuser}"
 
-COPY build_bespoke.sh "${apphome}"
-RUN chown "${appuser}" "${apphome}/build_bespoke.sh" && \
-    sh "${apphome}/build_bespoke.sh" -v --install-only
 
+#chown -Rv "${appuser}:${appuser}" "${apphome}"
+
+COPY --chown=${appuser}:${appuser} build_bespoke.sh "${apphome}/build_bespoke.sh"
 USER ${appuser}:${appuser}
 
-WORKDIR ${apphome}
-#VOLUME ${apphome}/BespokeSynth
+
+# WORKDIR ${apphome}
+# VOLUME ${apphome}/BespokeSynth
+# RUN  sh "${apphome}/build_bespoke.sh" -v --install-only
+
+WORKDIR /workspace
 
 # RUN git clone https://github.com/BespokeSynth/BespokeSynth && \
 #   cd BespokeSynth && \
@@ -44,4 +58,27 @@ WORKDIR ${apphome}
 
 #CMD /BespokeSynth/ignore/build/Source/BespokeSynth_artefacts/Release/BespokeSynth
 #CMD /usr/local/bin/BespokeSynth
+CMD bash --login
+
+
+FROM buildstage AS addpluginsstage
+USER root
+RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
+    --mount=type=cache,id=dnf-cache,target=/var/cache/dnf,sharing=shared \
+    mkdir -p /etc/yum.repos.d && \
+    dnf -y copr enable ycollet/audinux && \
+    dnf install -y wavetable \
+        lv2-guitarix-plugins \
+        vst3-guitarix \
+        fluidsynth \
+        fluida \
+        string-machine \
+        surge-xt \
+        vst3-surge-xt \
+        vst3-wavetable
+
+WORKDIR /home/${appuser}
+USER ${appuser}
+RUN mkdir .config/
+
 CMD bash --login

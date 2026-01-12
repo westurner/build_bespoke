@@ -15,7 +15,13 @@ fi
 
 set -x
 
+
 PODMAN_RUN_ARGS=${PODMAN_RUN_ARGS:-"--userns=keep-id --security-opt=label=disable"}
+
+# # Optionally add XAUTHORITY volumes if XAUTHORITY is set
+# if [ -n "${XAUTHORITY}" ]; then
+#     PODMAN_RUN_ARGS="$PODMAN_RUN_ARGS -v ${XAUTHORITY}:/root/.Xauthority:ro -v ${XAUTHORITY}:/home/appuser/.Xauthority:ro -v ${XAUTHORITY}:${XAUTHORITY}:ro"
+# fi
 
 cmd=$1
 if [ "$cmd" = "run" ] && [ -z "$SKIP_PODMAN_ROOTLESS" ]; then  # skip: SC2236
