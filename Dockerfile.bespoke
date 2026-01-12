@@ -1,5 +1,5 @@
 
-FROM quay.io/fedora/fedora-toolbox:41 as buildstage
+FROM quay.io/fedora/fedora-toolbox:43 as buildstage
 LABEL comment="A fedora-toolbox container for BespokeSynth development"
 
 # Usage:
@@ -18,8 +18,8 @@ USER root
 
 RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
     --mount=type=cache,id=dnf-cache,target=/var/cache/dnf,sharing=shared \
-  dnf install -y make cmake clang python3 python3-devel alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.0-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel \
-        alsa-lib freetype mesa-libGL libcurl webkit2gtk4.0 gtk+ pipewire-jack-audio-connection-kit \
+  dnf install -y make cmake clang python3 python3-devel pybind11-devel python3-pybind11 alsa-lib-devel freetype-devel mesa-libGL-devel libcurl-devel webkit2gtk4.1-devel gtk+-devel pipewire-jack-audio-connection-kit-devel libusb1-devel \
+        alsa-lib freetype mesa-libGL libcurl webkit2gtk4.1 gtk+ pipewire-jack-audio-connection-kit \
         \
         bash-completion \
         gdb gdb-gdbserver \
@@ -79,6 +79,6 @@ RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
 
 WORKDIR /home/${appuser}
 USER ${appuser}
-RUN mkdir .config/
+RUN mkdir -p .config/ Documents/BespokeSynth/savestate
 
 CMD bash --login

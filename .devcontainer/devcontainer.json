@@ -6,14 +6,16 @@
 	// 	"context": "..",
 	// 	"dockerfile": "../Dockerfile.bespoke"
 	// },
-	"image": "westurner/bespokesynthsrc",
+	"image": "westurner/bespokesynthsrc:43",
 
 	// 1. Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": []
 	// "forwardPorts": [3939],
 
 	// 2. Use 'mounts' to make a list of local directories available inside the container. More info: https://code.visualstudio.com/remote/advancedcontainers/add-local-file-mount
-	// "mounts": [],
+	"mounts": [
+		"source=${localEnv:XAUTHORITY},target=/home/appuser/.Xauthority,type=bind,consistency=cached",
+	],
 
 	// 3. Use 'runArgs' to pass arguments to the container.
 	// run the container with all GPUs
@@ -40,12 +42,15 @@
 		"--device","/dev/dri/card1",
 		"--device","/dev/dri/renderD128",
 		"-e DISPLAY",
+		"-e WAYLAND_DISPLAY", //=${localEnv:WAYLAND_DISPLAY}",
+
 		"-v","/tmp/.X11-unix:/tmp/.X11-unix:rw",
 
 		"--device","/dev/snd",
 		//"--device","/dev/snd/seq",
 		//"-v /run/user/$(shell id -u)/pipewire-0:/tmp/pipewire-0"
 		"-v","/run/user/1000/pipewire-0:/tmp/pipewire-0",
+
 
 		"-e XDG_RUNTIME_DIR=/tmp"
 
