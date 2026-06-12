@@ -51,3 +51,6 @@ BespokeSynth/
 #
 build/
 tests/build/
+.test_history.json
+.gitignore
+/tmp
