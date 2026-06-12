@@ -3,6 +3,8 @@
 
 .PHONY: default help \
 	build podman-build \
+	run runhelp runtest runtesthelp \
+	test \
 	_podman-run podman-run podman-run-run \
 	podman-run-buildbespoke podman-run-buildbespoke-westurner \
 	nvidia-ctk-cdi-generate
@@ -16,6 +18,37 @@ help:
 
 build:
 	sh ./build_bespoke.sh --build
+
+run:
+	./BespokeSynth/ignore/build/Source/BespokeSynth_artefacts/Release/BespokeSynth
+
+runhelp:
+	./BespokeSynth/ignore/build/Source/BespokeSynth_artefacts/Release/BespokeSynth --help
+
+runtest:
+	BespokeSynth/tests/build/TestRunner
+
+
+runtest-v:
+	BespokeSynth/tests/build/TestRunner -v
+
+runtesthelp:
+	BespokeSynth/tests/build/TestRunner -h
+
+test:
+	$(MAKE) -C BespokeSynth/tests/build
+	$(MAKE) runtest
+
+test-xunit:
+	$(MAKE) -C BespokeSynth/tests/build
+	BespokeSynth/tests/build/TestRunner --xunit-xml=test_results.xml
+
+test-coverage:
+	cd BespokeSynth/tests/build && cmake -DENABLE_COVERAGE=ON .. && $(MAKE)
+	BespokeSynth/tests/build/TestRunner --xunit-xml=test_results.xml
+	lcov --capture --directory BespokeSynth/tests/build --output-file coverage.info
+	genhtml coverage.info --output-directory coverage_report
+	@echo "Coverage report generated at coverage_report/index.html"
 
 ###
 
@@ -41,8 +74,9 @@ PODMAN_OPTS=-e HOME=/workspace \
 				-v ${XAUTHORITY}:/home/appuser/.Xauthority:ro \
 				-v ${XAUTHORITY}:${XAUTHORITY}:ro \
                 -e DISPLAY \
-				-e HOME="/home/appuser" \
-                -v /tmp/.X11-unix:/tmp/.X11-unix:rw
+				-e WAYLAND_DISPLAY \
+                -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+				-e HOME="/home/appuser"
 
 
 PODMAN_RM=--rm
@@ -58,7 +92,7 @@ PODMAN_VOLUMES=-v "${HOME}/-wrk/-ve311/arts:/workspace" -v "${HOME}/-wrk/arts:${
 PODMAN_ARGS=
 
 CONTAINER_NAME=westurner/bespokesynthsrc
-CONTAINER_NAME=westurner/bespokesynthsrc:43
+CONTAINER_NAME=westurner/bespokesynthsrc:44
 
 
 podman-build:
@@ -86,7 +120,6 @@ BS_BIN_PATH=/workspace/src/arts/build_bespoke/BespokeSynth/ignore/build/Source/B
 podman-run-run:
 	$(MAKE) podman-run \
 		PODMAN_CMD="sh -c 'set -x; pwd; \
-sleep 5; \
 ln -s /workspace/src/arts/bespoke/savestate /home/appuser/Documents/BespokeSynth/savestate; \
 ls -al /workspace/src/arts/bespoke/savestate /home/appuser /home/appuser/Documents/BespokeSynth/savestate; \
 ${BS_BIN_PATH} ${BS_ARGS} ${BS_FILE}'"

@@ -1,5 +1,5 @@
 
-FROM quay.io/fedora/fedora-toolbox:43 as buildstage
+FROM quay.io/fedora/fedora-toolbox:44 as buildstage
 LABEL comment="A fedora-toolbox container for BespokeSynth development"
 
 # Usage:
@@ -31,7 +31,7 @@ RUN --mount=type=cache,id=yum-cache,target=/var/cache/yum,sharing=shared \
         lv2-qmidiarp
 
 # Create the homedir, if it doesn't already exist e.g. due to a build --volume
-RUN set -x; useradd -u 1000 -F -s /bin/bash -U -m -d "${apphome}" "${appuser}"
+RUN set -x; useradd -u 1000 -o -s /bin/bash -U -m -d "${apphome}" "${appuser}"
 
 
 #chown -Rv "${appuser}:${appuser}" "${apphome}"
