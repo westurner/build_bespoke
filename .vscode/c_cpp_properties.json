@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/BespokeSynth/Source",
+                "${workspaceFolder}/BespokeSynth/libs/**",
+                "${workspaceFolder}/BespokeSynth/build/**",
+                "${workspaceFolder}/BespokeSynth/ignore/build/**",
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseEngine": "default",
+            "compileCommands": "${workspaceFolder}/BespokeSynth/ignore/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

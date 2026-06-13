@@ -5,5 +5,7 @@
         "complex": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/clang",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/BespokeSynth/ignore/build/compile_commands.json",
+    "C_Cpp.intelliSenseEngine": "default",
     "python.defaultInterpreterPath": "python3"
 }
