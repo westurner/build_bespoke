@@ -4,5 +4,6 @@
         "cmath": "cpp",
         "complex": "cpp"
     },
-    "C_Cpp.default.compilerPath": "/usr/bin/clang"
+    "C_Cpp.default.compilerPath": "/usr/bin/clang",
+    "python.defaultInterpreterPath": "python3"
 }
