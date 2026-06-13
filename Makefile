@@ -48,7 +48,12 @@ test-coverage:
 	BespokeSynth/tests/build/TestRunner --xunit-xml=test_results.xml
 	lcov --capture --directory BespokeSynth/tests/build --output-file coverage.info
 	genhtml coverage.info --output-directory coverage_report
-	@echo "Coverage report generated at coverage_report/index.html"
+	genhtml coverage.info --output-directory coverage_report --json > coverage_report.json
+	lcov --summary coverage.info > coverage_report.txt
+	@echo "Coverage reports generated:"
+	@echo "  - HTML:  coverage_report/index.html"
+	@echo "  - JSON:  coverage_report.json"
+	@echo "  - Text:  coverage_report.txt"
 
 ###
 
