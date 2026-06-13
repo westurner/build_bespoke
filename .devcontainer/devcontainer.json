@@ -6,7 +6,7 @@
 	// 	"context": "..",
 	// 	"dockerfile": "../Dockerfile.bespoke"
 	// },
-	"image": "westurner/bespokesynthsrc:43",
+	"image": "westurner/bespokesynthsrc:44",
 
 	// 1. Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": []
@@ -30,9 +30,9 @@
 		"--log-level=debug",
 
 
-		//// to run bespoke within this container
+		//// to run BespokeSynth within this container
 		// https://github.com/NVIDIA/nvidia-container-toolkit/issues/46#issuecomment-1587350187
-		"--net=host",
+		//"--net=host",  // TODO: is this necessary or not?
 		"--ipc=host",
 
 		"--device","nvidia.com/gpu=all",
